@@ -68,8 +68,9 @@ typedef struct {
     
     CGContextSaveGState(context);
     
+    CGContextClearRect(context, rect);
+    
     if (pathRef) {
-        CGContextClearRect(context, rect);
         CGContextSetLineWidth(context, 2.0f);
         [[UIColor whiteColor] setStroke];
         [[UIColor whiteColor] setFill];
