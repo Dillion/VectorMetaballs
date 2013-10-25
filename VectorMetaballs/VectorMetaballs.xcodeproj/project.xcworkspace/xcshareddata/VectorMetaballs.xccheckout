@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7FE1202F-7DB4-4C6C-B45A-58696FBE213C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>VectorMetaballs</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F4D1D36B-1AD8-4867-A08F-7E323BBD8E4F</key>
+		<string>ssh://github.com/Dillion/VectorMetaballs.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>VectorMetaballs/VectorMetaballs.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F4D1D36B-1AD8-4867-A08F-7E323BBD8E4F</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/Dillion/VectorMetaballs.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F4D1D36B-1AD8-4867-A08F-7E323BBD8E4F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F4D1D36B-1AD8-4867-A08F-7E323BBD8E4F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>VectorMetaballs</string>
+		</dict>
+	</array>
+</dict>
+</plist>
