@@ -262,17 +262,7 @@ typedef struct {
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    __block NSUInteger index = 0;
-    [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-        if ([_metaballArray count] > index) {
-            UITouch *touch = (UITouch *)obj;
-            Metaball *currentMetaball = [_metaballArray objectAtIndex:index];
-            currentMetaball.position = [touch locationInView:self];
-            index++;
-        } else {
-            *stop = YES;
-        }
-    }];
+    [self updateMetaballsForTouchSet:touches];
     
     [self drawMetaballSystem];
     [self setNeedsDisplay];
@@ -288,17 +278,7 @@ typedef struct {
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    __block NSUInteger index = 0;
-    [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-        if ([_metaballArray count] > index) {
-            UITouch *touch = (UITouch *)obj;
-            Metaball *currentMetaball = [_metaballArray objectAtIndex:index];
-            currentMetaball.position = [touch locationInView:self];
-            index++;
-        } else {
-            *stop = YES;
-        }
-    }];
+    [self updateMetaballsForTouchSet:touches];
     
     [self drawMetaballSystem];
     [self setNeedsDisplay];
@@ -322,6 +302,47 @@ typedef struct {
     pathRef = NULL;
     
     [self setNeedsDisplay];
+}
+
+- (void)updateMetaballsForTouchSet:(NSSet *)touches
+{
+    __block NSMutableSet *trackedTouches = [touches mutableCopy];
+    
+    [_metaballArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        __block CGFloat shortestDistanceToMetaballs = CGFLOAT_MAX;
+        __block CGFloat distanceToCurrentMetaball = CGFLOAT_MAX;
+        __block UITouch *matchingTouch;
+        __block Metaball *movedMetaball;
+        
+        [_metaballArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            
+            Metaball *currentMetaball = (Metaball *)obj;
+            
+            if ([trackedTouches count] > 0) {
+                
+                [trackedTouches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+                    UITouch *touch = (UITouch *)obj;
+                    CGPoint location = [touch locationInView:self];
+                    CGFloat distance = [self distanceFromPoint:currentMetaball.position toPoint:location];
+                    if (distance < distanceToCurrentMetaball) {
+                        distanceToCurrentMetaball = distance;
+                        matchingTouch = touch;
+                    }
+                }];
+                
+                if (distanceToCurrentMetaball < shortestDistanceToMetaballs) {
+                    shortestDistanceToMetaballs = distanceToCurrentMetaball;
+                    movedMetaball = currentMetaball;
+                }
+            }
+        }];
+        
+        if (movedMetaball) {
+            movedMetaball.position = [matchingTouch locationInView:self];
+            [trackedTouches removeObject:matchingTouch];
+        }
+    }];
 }
 
 @end
