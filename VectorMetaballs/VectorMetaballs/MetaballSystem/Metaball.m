@@ -31,7 +31,7 @@
 
 @implementation Metaball
 
-- (id)initWithPosition:(CGPoint)position size:(CGFloat)size
+- (id)initWithPosition:(GLKVector2)position size:(CGFloat)size
 {
     self = [super init];
     if (self) {

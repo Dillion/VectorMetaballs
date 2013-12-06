@@ -34,7 +34,7 @@
 #define RESOLUTION 4
 
 typedef struct {
-    CGPoint position;
+    GLKVector2 position;
     CGFloat force;
 } PositionForce;
 
@@ -48,7 +48,7 @@ typedef struct {
         
         self.multipleTouchEnabled = YES;
         
-        Metaball *metaball = [[Metaball alloc] initWithPosition:CGPointMake(220, 200) size:50.0];
+        Metaball *metaball = [[Metaball alloc] initWithPosition:GLKVector2Make(220, 200) size:50.0];
         
         self.metaballArray = [NSMutableArray array];
         [_metaballArray addObject:metaball];
@@ -96,14 +96,14 @@ typedef struct {
     
     [_metaballArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         Metaball *metaball = (Metaball *)obj;
-        metaball.edge = [self trackBorder:CGPointMake(metaball.position.x, metaball.position.y)];
+        metaball.edge = [self trackBorder:metaball.position];
         metaball.tracked = NO;
     }];
     
     __block Metaball *currentMetaball = [self untrackedMetaball];
     
     CGMutablePathRef mutablePathRef = CGPathCreateMutable();
-    __block CGPoint edge = currentMetaball.edge;
+    __block GLKVector2 edge = currentMetaball.edge;
     CGPathMoveToPoint(mutablePathRef, NULL, edge.x, edge.y);
     
     int edgeSteps = 0;
@@ -118,12 +118,12 @@ typedef struct {
         
         CGPathAddLineToPoint(mutablePathRef, NULL, edge.x, edge.y);
         
-        __block CGPoint previousEdge = CGPointMake(edge.x, edge.y);
+        __block GLKVector2 previousEdge = GLKVector2Make(edge.x, edge.y);
         
         [_metaballArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             
             Metaball *metaball = (Metaball *)obj;
-            if ([self distanceFromPoint:metaball.edge toPoint:previousEdge] < RESOLUTION * 0.5) {
+            if (GLKVector2Distance(metaball.edge, previousEdge) < RESOLUTION * 0.5) {
                 
                 edge = metaball.edge;
                 currentMetaball.tracked = YES;
@@ -172,17 +172,12 @@ typedef struct {
     }
 }
 
-- (CGFloat)vectorLength:(CGPoint)vector
-{
-    return sqrtf(powf(vector.x,2) + powf(vector.y, 2));
-}
-
-- (CGFloat)calculateForce:(CGPoint)position
+- (CGFloat)calculateForce:(GLKVector2)position
 {
     __block CGFloat force = 0;
     [_metaballArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         Metaball *metaball = (Metaball *)obj;
-        CGFloat div = powf([self vectorLength:CGPointMake(metaball.position.x - position.x, metaball.position.y - position.y)], GOOIENESS);
+        CGFloat div = powf(GLKVector2Distance(metaball.position, position), GOOIENESS);
         if (div != 0.0f) {
             force += metaball.size / div;
         } else {
@@ -193,40 +188,39 @@ typedef struct {
     return force;
 }
 
-- (CGPoint)calculateNormal:(CGPoint)position
+- (GLKVector2)calculateNormal:(GLKVector2)position
 {
-    __block CGPoint normal = CGPointZero;
+    __block GLKVector2 normal = GLKVector2Make(0,0);
     [_metaballArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         Metaball *metaball = (Metaball *)obj;
-        CGPoint radius = CGPointMake(metaball.position.x - position.x, metaball.position.y - position.y);
-        CGFloat length = [self vectorLength:radius];
+        GLKVector2 radius = GLKVector2Subtract(metaball.position, position);
+        CGFloat length = GLKVector2Length(radius);
         if (length != 0) {
             CGFloat multiply = (-1) * GOOIENESS * metaball.size / powf(length, 2 + GOOIENESS);
-            normal = CGPointMake(normal.x + radius.x * multiply, normal.y + radius.y * multiply);
+            normal = GLKVector2Add(normal, GLKVector2MultiplyScalar(radius, multiply));
         }
     }];
-    CGFloat magnitude = [self vectorLength:normal];
     
-    return CGPointMake(normal.x / magnitude, normal.y / magnitude);
+    return GLKVector2Normalize(normal);
 }
 
-- (PositionForce)stepToBorder:(CGPoint)position
+- (PositionForce)stepToBorder:(GLKVector2)position
 {
     CGFloat force = [self calculateForce:position];
-    CGPoint normal = [self calculateNormal:position];
+    GLKVector2 normal = [self calculateNormal:position];
     CGFloat stepSize = powf((minSize / THRESHOLD), 1.0 / GOOIENESS) - powf((minSize / force), 1.0 / GOOIENESS) + FLT_EPSILON;
     PositionForce positionForce;
-    positionForce.position = CGPointMake(position.x + normal.x*stepSize, position.y + normal.y*stepSize);
+    positionForce.position = GLKVector2Add(position, GLKVector2MultiplyScalar(normal, stepSize));
     positionForce.force = force;
     
     return positionForce;
 }
 
-- (CGPoint)trackBorder:(CGPoint)position
+- (GLKVector2)trackBorder:(GLKVector2)position
 {
     PositionForce positionForce;
     positionForce.force = CGFLOAT_MAX;
-    positionForce.position = CGPointMake(position.x, position.y + 1);
+    positionForce.position = GLKVector2Make(position.x, position.y + 1);
     
     int reps = 0;
     CGFloat previousForce = 0;
@@ -238,23 +232,15 @@ typedef struct {
     return positionForce.position;
 }
 
-- (CGPoint)rungeKutta2:(PositionForce)positionForce
+- (GLKVector2)rungeKutta2:(PositionForce)positionForce
 {
-    CGPoint normal = [self calculateNormal:positionForce.position];
-    CGPoint t1 = CGPointMake(normal.y * RESOLUTION * -0.5, normal.x * RESOLUTION * 0.5);
+    GLKVector2 normal = [self calculateNormal:positionForce.position];
+    GLKVector2 t1 = GLKVector2Make(normal.y * RESOLUTION * -0.5, normal.x * RESOLUTION * 0.5);
     
-    CGPoint normal2 = [self calculateNormal:CGPointMake(positionForce.position.x + t1.x, positionForce.position.y + t1.y)];
-    CGPoint t2 = CGPointMake(normal2.y * RESOLUTION * -1, normal2.x * RESOLUTION);
+    GLKVector2 normal2 = [self calculateNormal:GLKVector2Add(positionForce.position, t1)];
+    GLKVector2 t2 = GLKVector2Make(normal2.y * RESOLUTION * -1, normal2.x * RESOLUTION);
     
-    return CGPointMake(positionForce.position.x + t2.x, positionForce.position.y + t2.y);
-}
-
-- (CGFloat)distanceFromPoint:(CGPoint)point1 toPoint:(CGPoint)point2
-{
-    CGFloat x1 = point1.x - point2.x;
-    CGFloat y1 = point1.y - point2.y;
-    
-    return x1*x1 + y1*y1;
+    return GLKVector2Add(positionForce.position, t2);
 }
 
 #pragma mark
@@ -286,7 +272,7 @@ typedef struct {
 
 #pragma mark
 
-- (void)addMetaballAtPosition:(CGPoint)position size:(CGFloat)size
+- (void)addMetaballAtPosition:(GLKVector2)position size:(CGFloat)size
 {
     Metaball *newMetaball = [[Metaball alloc] initWithPosition:position size:size];
     [_metaballArray addObject:newMetaball];
@@ -324,7 +310,7 @@ typedef struct {
                 [trackedTouches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
                     UITouch *touch = (UITouch *)obj;
                     CGPoint location = [touch locationInView:self];
-                    CGFloat distance = [self distanceFromPoint:currentMetaball.position toPoint:location];
+                    CGFloat distance = GLKVector2Distance(currentMetaball.position, GLKVector2Make(location.x, location.y));
                     if (distance < distanceToCurrentMetaball) {
                         distanceToCurrentMetaball = distance;
                         matchingTouch = touch;
@@ -339,7 +325,8 @@ typedef struct {
         }];
         
         if (movedMetaball) {
-            movedMetaball.position = [matchingTouch locationInView:self];
+            CGPoint movedPoint = [matchingTouch locationInView:self];
+            movedMetaball.position = GLKVector2Make(movedPoint.x, movedPoint.y);
             [trackedTouches removeObject:matchingTouch];
         }
     }];

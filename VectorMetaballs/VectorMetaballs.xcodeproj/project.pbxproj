@@ -25,6 +25,7 @@
 		4D04C768181A4B0C00DEDDAB /* MetaballUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D04C764181A4B0C00DEDDAB /* MetaballUIView.m */; };
 		4D04C76B181A4B1300DEDDAB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D04C76A181A4B1300DEDDAB /* ViewController.m */; };
 		4D04C76C181A4B1300DEDDAB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D04C76A181A4B1300DEDDAB /* ViewController.m */; };
+		4D42FDBB1851D57F0080778D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D42FDBA1851D57F0080778D /* GLKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		4D04C764181A4B0C00DEDDAB /* MetaballUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaballUIView.m; sourceTree = "<group>"; };
 		4D04C769181A4B1300DEDDAB /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		4D04C76A181A4B1300DEDDAB /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		4D42FDBA1851D57F0080778D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D42FDBB1851D57F0080778D /* GLKit.framework in Frameworks */,
 				4D04C734181A4AF800DEDDAB /* CoreGraphics.framework in Frameworks */,
 				4D04C736181A4AF800DEDDAB /* UIKit.framework in Frameworks */,
 				4D04C732181A4AF800DEDDAB /* Foundation.framework in Frameworks */,
@@ -108,6 +111,7 @@
 		4D04C730181A4AF800DEDDAB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4D42FDBA1851D57F0080778D /* GLKit.framework */,
 				4D04C731181A4AF800DEDDAB /* Foundation.framework */,
 				4D04C733181A4AF800DEDDAB /* CoreGraphics.framework */,
 				4D04C735181A4AF800DEDDAB /* UIKit.framework */,
@@ -475,6 +479,7 @@
 				4D04C75C181A4AF800DEDDAB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4D04C75D181A4AF800DEDDAB /* Build configuration list for PBXNativeTarget "VectorMetaballsTests" */ = {
 			isa = XCConfigurationList;
@@ -483,6 +488,7 @@
 				4D04C75F181A4AF800DEDDAB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

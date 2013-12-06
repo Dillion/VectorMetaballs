@@ -34,13 +34,13 @@
 
 @interface Metaball : NSObject
 
-@property (nonatomic) CGPoint position;
+@property (nonatomic) GLKVector2 position;
 @property (nonatomic) CGFloat size;
-@property (nonatomic) CGPoint edge;
+@property (nonatomic) GLKVector2 edge;
 @property (nonatomic) BOOL tracked;
-@property (nonatomic) CGPoint direction;
+@property (nonatomic) GLKVector2 direction;
 
-- (id)initWithPosition:(CGPoint)position size:(CGFloat)size;
+- (id)initWithPosition:(GLKVector2)position size:(CGFloat)size;
 - (void)setSize:(CGFloat)size;
 
 @end

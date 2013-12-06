@@ -84,7 +84,7 @@
     if (doubleTap.state == UIGestureRecognizerStateRecognized) {
         CGPoint location = [doubleTap locationInView:self.view];
         
-        [_metaballUIView addMetaballAtPosition:location size:2.0f * (arc4random()%15) + 10.0f];
+        [_metaballUIView addMetaballAtPosition:GLKVector2Make(location.x, location.y) size:2.0f * (arc4random()%15) + 10.0f];
     }
 }
 

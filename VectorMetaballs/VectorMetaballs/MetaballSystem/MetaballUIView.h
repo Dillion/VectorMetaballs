@@ -38,7 +38,7 @@
 
 @property (nonatomic, strong) NSMutableArray *metaballArray;
 
-- (void)addMetaballAtPosition:(CGPoint)position size:(CGFloat)size;
+- (void)addMetaballAtPosition:(GLKVector2)position size:(CGFloat)size;
 - (void)removeMetaballs;
 
 @end
